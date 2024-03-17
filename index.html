@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wound and Treatment Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .form-section {
+            flex: 1;
+            order: 1;
+        }
+
+        .treatment-section {
+            flex: 1;
+            order: 2;
+            margin: 0 20px;
+        }
+        /* Centered with margins */
+        .comments-container {
+            flex: 1;
+            order: 3;
+        }
+        /* Aligned to the right */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .comments-flex-container {
+            display: flex;
+            flex-direction: column;
+            max-width: 300px; /* Ensures comments are vertically aligned and right-aligned */
+        }
+
+        .comments-flex-item + .comments-flex-item {
+            margin-top: 20px;
+        }
+
+
+        /* Updated Treatment Tracker Styles */
+.treatment-header {
+    display: flex; /* Use flexbox to layout the header items horizontally */
+    justify-content: center; /* Center the header items */
+    margin-bottom: 10px; /* Add some space below the header */
+}
+
+.vertical-text {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    margin: 0 8px; /* Adjust spacing around the vertical text */
+}
+
+        .treatment {
+            display: flex; /* Align treatment options and checkboxes in a row */
+            align-items: center; /* Center items vertically */
+            margin-bottom: 2px; /* Reduced space between each treatment option */
+        }
+
+        .treatments-container {
+            display: flex;
+            flex-direction: column; /* Stack treatments vertically */
+            font-size: 14px;
+            max-height: 450px; /* Adjust based on your preference for a scrollable container */
+            overflow-y: auto; /* Makes the container scrollable */
+            border: 1px solid #ccc; /* Optional: adds a border around the container for visual separation */
+            padding: 5px; /* Optional: adds some padding inside the container */
+            margin-bottom: 10px; /* Adds space below the container */
+        }
+
+
+.treatment input[type="checkbox"] {
+    margin-right: 5px; /* Space between checkbox and its label */
+    margin-left: 10px; /* Space before the first checkbox to separate from text */
+}
+
+
+
+/* Additional styles to ensure form alignment */
+.form-section, .treatment-section {
+    width: auto; /* Adjust width as needed or remove if flex layout is used */
+    flex: 1; /* If using flex in the container, this will help distribute space */
+}
+
+        .condition-progress {
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="form-section">
+            <h2>Wound Measurement Tracker</h2>
+            <!-- Form elements go here -->
+            <!-- Form Elements Block -->
+            Patient Name: <input type="text" id="patientName"><br>
+            Wound Location: <select id="woundLocation" onchange="toggleOtherField()">
+                <option value="Sacrum">Sacrum</option>
+                <option value="Hip">Hip</option>
+                <option value="Leg">Leg</option>
+                <option value="Heel">Heel</option>
+                <option value="Other">Other</option>
+            </select>
+            <input type="text" id="otherLocationField" class="hidden" placeholder="Specify location"><br>
+            Side:
+            <input type="radio" name="side" value="Right" checked> Right
+            <input type="radio" name="side" value="Left"> Left
+            <input type="radio" name="side" value="Midline"> Midline<br>
+            Length (cm): <input type="number" id="length" min="0" step="0.1"><br>
+            Width (cm): <input type="number" id="width" min="0" step="0.1"><br>
+            Depth (cm): <input type="number" id="depth" min="0" step="0.1"><br>
+            Granulation (%): <input type="number" id="granulation" min="0" max="100"><br>
+            Slough (%): <input type="number" id="slough" min="0" max="100"><br>
+            Eschar (%): <input type="number" id="eschar" min="0" max="100"><br>
+            Epithelialization (%): <input type="number" id="epithelialization" min="0" max="100"><br>
+            Drainage:
+            <input type="radio" name="drainageType" value="None" checked> None
+            <input type="radio" name="drainageType" value="Serous"> Serous
+            <input type="radio" name="drainageType" value="Serosanguinous"> Serosanguinous
+            <input type="radio" name="drainageType" value="Purulent"> Purulent<br>
+            Drainage Amount:
+            <input type="radio" name="drainageAmount" value="Minimal" checked> Minimal
+            <input type="radio" name="drainageAmount" value="Moderate"> Moderate
+            <input type="radio" name="drainageAmount" value="Copious"> Copious<br>
+            Other Descriptors:
+            <input type="checkbox" id="odor"> Odor<br>
+            <h10><bold>Morphology:</bold></h10>
+            <div style="display: flex; align-items: center; flex-wrap: wrap;">
+
+                <div><input type="radio" id="stage1" name="woundStage" value="1"><label for="st 1">Stage 1</label></div>
+                <div><input type="radio" id="stage2" name="woundStage" value="2"><label for="st 2">Stage 2</label></div>
+                <div><input type="radio" id="stage3" name="woundStage" value="3"><label for="st 3">Stage 3</label></div>
+                <div><input type="radio" id="stage4" name="woundStage" value="4"><label for="st 4">Stage 4</label></div>
+                <div><input type="radio" id="unstageable" name="woundStage" value="unstageable"><label for="unstageable">Unstageable</label></div>
+                <div><input type="radio" id="dti" name="woundStage" value="dti"><label for="dti">DTI</label></div>
+            </div>
+
+            <div style="display: flex; align-items: center; flex-wrap: wrap; margin-top: 20px;">
+
+                <div><input type="checkbox" id="blister" name="otherFeatures" value="blister"><label for="blister">Blister</label></div>
+                <div><input type="checkbox" id="maceration" name="otherFeatures" value="maceration"><label for="maceration">Maceration</label></div>
+                <div><input type="checkbox" id="dermatitis" name="otherFeatures" value="dermatitis"><label for="dermatitis">Dermatitis</label></div>
+                <div><input type="checkbox" id="softening" name="otherFeatures" value="softening"><label for="softening">Softening (Heel)</label></div>
+            </div>
+
+
+        </div>
+        <div class="treatment-section">
+
+            <form id="treatmentForm">
+                <div class="treatments-container">
+                    <div class="treatment-header" style="display: flex; align-items: center; margin-bottom: 1px;">
+                        <div class="vertical-text">Now</div>
+                        <div class="vertical-text">Next</div>
+                        <div style="flex-grow: 1; text-align: left;">Treatment</div>
+                    </div>
+                    <!-- Dynamically populated treatment options will be inserted here -->
+                </div>
+                <div class="submit-btn">
+                    <button type="button" onclick="addToTable()">Submit</button>
+                </div>
+            </form>
+        </div>
+        <div class="comments-container">
+            <div class="comments-flex-container">
+                <div class="comments-flex-item">
+                    <label for="comments">Wound Comments:</label><br>
+                    <textarea id="comments" rows="4" cols="50"></textarea>
+                </div>
+                <div class="comments-flex-item">
+                    <label for="treatmentComments">Treatment Comments:</label><br>
+                    <textarea id="treatmentComments" name="treatmentComments" rows="4" cols="50"></textarea>
+                </div>
+                <div class="condition-progress">
+
+                    <input type="radio" id="improving" name="conditionProgress" value="Improving">
+                    <label for="improving">Improved</label>
+                    <input type="radio" id="stabile" name="conditionProgress" value="Stabilizing">
+                    <label for="stabilizing">Stabilizing</label>
+                    <input type="radio" id="deteriorating" name="conditionProgress" value="Deteriorating">
+                    <label for="deteriorating">Declined</label>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <h3>Entries:</h3>
+    <table id="entriesTable">
+        <!-- Table headers and dynamic rows go here -->
+        <!-- Table Headers and Dynamic Rows Block -->
+        <thead>
+            <tr>
+                <th>Patient Name</th>
+                <th>Location</th>
+                <th>Side</th>
+                <th>Dimensions (L x W x D)</th>
+                <th>Descriptors</th>
+                <th>Wound Comments</th>
+                <th>Current Treatment</th>
+                <th>Next Treatment</th>
+                <th>Treatment Comments</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Dynamic entries will be added here via JavaScript -->
+        </tbody>
+
+    </table>
+   
+    <div class="button-container">
+        <button onclick="downloadTableAsCSV()">Download List</button>
+        <button onclick="downloadEntriesAsText()">Download as Text</button>
+    </div>
+
+    <script>
+        // Function to toggle visibility of the 'Other' location input field
+        function toggleOtherField() {
+            const locationSelect = document.getElementById('woundLocation');
+            const otherLocationField = document.getElementById('otherLocationField');
+            if (locationSelect.value === 'Other') {
+                otherLocationField.classList.remove('hidden');
+            } else {
+                otherLocationField.classList.add('hidden');
+                otherLocationField.value = '';
+            }
+        }
+
+        function addToTable() {
+            const patientName = document.getElementById('patientName').value;
+            let woundLocation = document.getElementById('woundLocation').value;
+            if (woundLocation === 'Other') {
+                woundLocation = document.getElementById('otherLocationField').value;
+            }
+            const side = document.querySelector('input[name="side"]:checked').value;
+            const dimensions = `${document.getElementById('length').value}cm x ${document.getElementById('width').value}cm x ${document.getElementById('depth').value}cm`;
+            const granulation = document.getElementById('granulation').value > 0 ? `Granulation: ${document.getElementById('granulation').value}%` : "";
+            const slough = document.getElementById('slough').value > 0 ? `Slough: ${document.getElementById('slough').value}%` : "";
+            const eschar = document.getElementById('eschar').value > 0 ? `Eschar: ${document.getElementById('eschar').value}%` : "";
+            const epithelialization = document.getElementById('epithelialization').value > 0 ? `Epithelialization: ${document.getElementById('epithelialization').value}%` : "";
+            const drainageType = document.querySelector('input[name="drainageType"]:checked').value;
+            const drainageAmount = drainageType !== "None" ? `Drainage Amount: ${document.querySelector('input[name="drainageAmount"]:checked').value}` : "";
+            const odor = document.getElementById('odor').checked ? "Odor" : "";
+            const selectedWoundStage = document.querySelector('input[name="woundStage"]:checked') ? document.querySelector('input[name="woundStage"]:checked').value : "Not specified";
+
+            let selectedFeatures = [];
+            document.querySelectorAll('input[name="otherFeatures"]:checked').forEach((checkbox) => {
+                selectedFeatures.push(checkbox.value);
+            });
+            let featuresString = selectedFeatures.length > 0 ? `Features: ${selectedFeatures.join(", ")}` : "";
+
+            // Retrieving the condition progress
+            const conditionProgress = document.querySelector('input[name="conditionProgress"]:checked') ? document.querySelector('input[name="conditionProgress"]:checked').value : "";
+
+            const descriptors = [granulation, slough, eschar, epithelialization, `Drainage Type: ${drainageType}`, drainageAmount, odor, `Wound Stage: ${selectedWoundStage}`, featuresString].filter(Boolean).join(", ");
+
+            // Appending condition progress to the comments if selected
+            const comments = document.getElementById('comments').value + (conditionProgress ? " - Condition Progress: " + conditionProgress : "");
+            const treatmentComments = document.getElementById('treatmentComments').value;
+
+            const tableBody = document.getElementById('entriesTable').getElementsByTagName('tbody')[0];
+            const newRow = tableBody.insertRow(0);
+
+            const currentTreatments = Array.from(document.querySelectorAll('input[name="current[]"]:checked')).map(input => input.value).join(", ");
+            const nextTreatments = Array.from(document.querySelectorAll('input[name="next[]"]:checked')).map(input => input.value).join(", ");
+
+            newRow.insertCell(0).innerText = patientName;
+            newRow.insertCell(1).innerText = woundLocation;
+            newRow.insertCell(2).innerText = side;
+            newRow.insertCell(3).innerText = dimensions;
+            newRow.insertCell(4).innerText = descriptors;
+            newRow.insertCell(5).innerText = comments;
+            newRow.insertCell(6).innerText = currentTreatments;
+            newRow.insertCell(7).innerText = nextTreatments;
+            newRow.insertCell(8).innerText = treatmentComments;
+
+            // Clear form fields after submission
+            document.getElementById('comments').value = '';
+            document.getElementById('treatmentComments').value = '';
+            // Reset condition progress radios if necessary
+            document.querySelectorAll('input[name="conditionProgress"]').forEach(radio => radio.checked = false);
+        }
+
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            populateTreatments();
+        });
+        function populateTreatments() {
+
+            const treatmentsContainer = document.querySelector('.treatments-container');
+
+            if (!treatmentsContainer) {
+                console.warn('Treatments container not found. Exiting populateTreatments.');
+                return;
+            }
+
+
+            const treatments = [
+                "CLEANSE Normal Saline Cleanse",
+                "CLEANSE Dakins Cleanse [Antimicrobial]",
+                "PACK Dakins Wet to Dry [Antimicrobial / Bleach Based]",
+                "PACK Normal Saline Wet to Dry",
+                "COVER Duoderm [hydrogel]",
+                "COVER Comfort Foam [Foam Based]",
+                "COVER Xeroform [Non-stick Cover]",
+                "COVER Adaptic [Fenestrated Non-stick Barrier]",
+                "WOUND BED Santyl [Debriding]",
+                "WOUND BED Therahoney Sheets [Debriding honey]",
+                "WOUND BED Calcium Alginate [Absorbent]",
+                "WOUND BED Maxsorb AG [Silver Based]",
+                "WOUND BED Puracol [Collagen Sheets]",
+                "SURFACE Skin Prep [Complex Alcohol That Toughens Skin]",
+                "SURFACE Betadine [Drying on Iodine Based Antibiotic]",
+                "SURFACE Eucerin [Moisturizer]",
+                "SURFACE Lotrimin Powder or Powder Spray [Antifungal]",
+                "SURFACE Antifungal Cream",
+                "SURFACE Silvadene [Silver Based Anti-infective]",
+                "SURFACE Barrier Cream [Zinc Based]",
+                "SURFACE Triamcinolone Cream [Potent steroid]",
+                "DEVICE VAC Dressing",
+                "DEVICE Low Air Loss Mattress",
+                "DEVICE Bunny Boots"
+            ];
+            treatments.forEach((treatment, index) => {
+                const treatmentDiv = document.createElement('div');
+                treatmentDiv.className = 'treatment';
+                treatmentDiv.style.display = 'flex';
+                treatmentDiv.style.alignItems = 'center';
+                treatmentDiv.style.marginBottom = '5px';
+
+                // Now checkbox for the treatment
+                const currentCheckbox = document.createElement('input');
+                currentCheckbox.type = 'checkbox';
+                currentCheckbox.name = 'current[]';
+                currentCheckbox.value = treatment;
+
+                // Next checkbox for the treatment
+                const nextCheckbox = document.createElement('input');
+                nextCheckbox.type = 'checkbox';
+                nextCheckbox.name = 'next[]';
+                nextCheckbox.value = treatment;
+
+                // Label for the treatment description
+                const label = document.createElement('div');
+                label.textContent = treatment;
+                label.style.flexGrow = '1';
+                label.style.marginLeft = '10px'; // Space between checkboxes and treatment description
+
+                treatmentDiv.appendChild(currentCheckbox);
+                treatmentDiv.appendChild(nextCheckbox);
+                treatmentDiv.appendChild(label);
+
+                treatmentsContainer.appendChild(treatmentDiv);
+
+
+            });
+        }
+
+        function downloadTableAsCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            let table = document.getElementById('entriesTable'); // Adjust if your table's ID is different
+            let rows = table.querySelectorAll('tr');
+
+            for (let i = 0; i < rows.length; i++) {
+                let row = [], cols = rows[i].querySelectorAll('td, th');
+
+                for (let j = 0; j < cols.length; j++) {
+                    // Clean the text content to escape commas and newlines
+                    let text = cols[j].innerText.replace(/,/g, '').replace(/(\r\n|\n|\r)/gm, '');
+                    row.push(text);
+                }
+
+                csvContent += row.join(",") + "\r\n";
+            }
+
+            // Create a link and trigger the download
+            let encodedUri = encodeURI(csvContent);
+            let link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "wound_treatment_tracker.csv");
+            document.body.appendChild(link); // Required for FF
+
+            link.click(); // This will download the file
+            document.body.removeChild(link); // Clean up
+        }
+        function downloadEntriesAsText() {
+            let textContent = "";
+            const table = document.getElementById('entriesTable');
+            const rows = table.querySelectorAll('tr');
+
+            // Skipping the header row by starting from index 1
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i].querySelectorAll('td');
+                textContent += `Entry ${i}:\n`;
+                textContent += `Patient Name: ${cells[0].innerText}\n`;
+                textContent += `Location: ${cells[1].innerText}\n`;
+                textContent += `Side: ${cells[2].innerText}\n`;
+                textContent += `Dimensions: ${cells[3].innerText}\n`;
+                textContent += `Descriptors: ${cells[4].innerText}\n`;
+                textContent += `Wound Comments: ${cells[5].innerText}\n`;
+                textContent += `Current Treatment: ${cells[6].innerText}\n`;
+                textContent += `Next Treatment: ${cells[7].innerText}\n`;
+                textContent += `Treatment Comments: ${cells[8].innerText}\n\n`;
+            }
+
+            // Creating and downloading the text file
+            const blob = new Blob([textContent], { type: "text/plain" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'EntriesNotes.txt';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+    </script>
+
+
+</body>
+</html>
